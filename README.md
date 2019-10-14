@@ -6,6 +6,14 @@ your favorite [find][find] command.
 **Note:** This plugin requires [vim-fzy][vim-fzy]. See
 [installation](#installation) instructions below.
 
+<dl>
+  <p align="center">
+  <a href="https://asciinema.org/a/274244">
+    <img src="https://asciinema.org/a/274244.png" width="480">
+  </a>
+  </p>
+</dl>
+
 
 ## Usage
 
