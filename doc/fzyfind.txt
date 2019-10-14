@@ -1,0 +1,130 @@
+*fzyfind.txt*  Fuzzy-select files under a specified directory.
+
+Author:     bfrg <https://github.com/bfrg>
+Website:    https://github.com/bfrg/vim-fzy-find
+License:    Same terms as Vim itself (see |license|)
+
+
+==============================================================================
+INTRODUCTION                                         *vim-fzy-find* *fzy-find*
+
+Find files under a directory using your favorite find command (fd, find(1),
+the_silver_searcher, ripgrep, etc.) and select the file using the
+fuzzy-searcher https://github.com/jhawthorn/fzy.
+
+Note: This plugin requires https://github.com/bfrg/vim-fzy. Installation
+instructions can be found on the plugin's website.
+
+==============================================================================
+COMMANDS                                                   *fzy-find-commands*
+                                                              *fzy-find-usage*
+
+:Find [dir]                                                        *fzy-:Find*
+            Find files recursively under the directory [dir], open the
+            selected file in the current window.
+
+            The file-search command can be specified through |g:fzy.findcmd|
+            (see below).
+
+            If [dir] is omitted, the search is performed in the current
+            working directory (as obtained by |getcwd()|).
+
+:SFind [dir]                                                      *fzy-:SFind*
+            Same as |fzy-:Find|, but opens the selected file in a new |split|.
+            The command can be preceded by a command modifier. For example, to
+            open the selected file in a new |vertical| split, run >
+                :vertical SFind [dir]
+<
+            Possible modifiers:
+                |vertical|
+                |tab|
+                |topleft|
+                |botright|
+                |leftabove|  (same as |aboveleft|)
+                |rightbelow| (same as |belowright|)
+
+==============================================================================
+CONFIGURATION                                                *fzy-find-config*
+
+                                                              *fzy-find-g:fzy*
+The height of the terminal window and the fzy input prompt can be changed
+through the dictionary variable |g:fzy|. Example:
+>
+    let g:fzy = {'height': 15, 'prompt': '▶ '}
+<
+Note: This variable is also used by https://github.com/bfrg/vim-fzy-common in
+order to provide a uniform terminal-window height and fzy prompt.
+
+
+g:fzy.findcmd                                                  *g:fzy.findcmd*
+            Set the find executable for the |fzy:-Find| and |fzy-:SFind|
+            commands. Example: >
+                let g:fzy = {'findcmd': 'fd --type f'}
+<
+            See also |fzy-find-tricks| below for more examples.
+
+            Note: It is possible to pipe the output of the command to another
+            program. For example, since fd doesn't provide a sort option, the
+            following can be used as a workaround: >
+                let g:fzy = {'findcmd': 'fd --type f | sort'}
+<
+            The file-search command is always run in the specified search
+            directory to avoid long file paths.
+
+                                                            *fzy-find-default*
+            If no |g:fzy.findcmd| is specified, the default find(1) executable
+            is used: >
+                find -name ".*" \! -name . \! -name .gitignore \! -name .vim
+                    -prune -o \( -type f -o -type l \)
+                    -printf "%P\n" 2>/dev/null
+<
+            Broken down, the expression means:
+                - ignore all files and directories starting with a dot,
+                - except for the current directory, .gitignore and .vim
+                - list only files and symlinks
+                - the -printf option is a GNU/find extension that will remove
+                  the "./" prefix from all file paths
+
+==============================================================================
+TIPS AND TRICKS                                              *fzy-find-tricks*
+
+Examples ~
+
+1. Find files using fd https://github.com/sharkdp/fd
+>
+    let g:fzy = {'findcmd': 'fd --type f --type l --exclude tmp'}
+<
+
+2. Find files using ripgrep https://github.com/BurntSushi/ripgrep
+>
+    let g:fzy = {'findcmd': 'rg --files --no-messages'}
+<
+
+3. Find files using the_silver_searcher
+   https://github.com/ggreer/the_silver_searcher
+>
+    let g:fzy = {'findcmd': 'ag --silent --ignore __pycache__ -g ""'}
+<
+
+Custom commands ~
+
+If you prefer shorter Ex commands, add the following to your |vimrc|:
+>
+    " Fuzzy search and edit files recursively under a specified directory
+    command! -nargs=* -bar -complete=dir FE Find <args>
+    command! -nargs=* -bar -complete=dir FS <mods> SFind <args>
+    command! -nargs=* -bar -complete=dir FV vertical SFind <args>
+    command! -nargs=* -bar -complete=dir FT tab SFind <args>
+<
+
+Mappings ~
+
+If you prefer mappings over Ex commands, you might find the following useful:
+>
+    " Edit files under current working directory
+    nnoremap <silent> <leader>fe :<c-u>Find<cr>
+    nnoremap <silent> <leader>fs :<c-u>SFind<cr>
+    nnoremap <silent> <leader>fv :<c-u>vertical SFind<cr>
+    nnoremap <silent> <leader>ft :<c-u>tab SFind<cr>
+<
+ vim:tw=78:et:ft=help:norl:
