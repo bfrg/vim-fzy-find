@@ -12,15 +12,15 @@ your favorite [find][find] command.
 | Command         | Description                                                 |
 |-----------------|-------------------------------------------------------------|
 | `:Find [dir]`   | Find files in `[dir]`, open selected file in current window.|
-| `:SFind [dir]`\*| Same as `:Find`, but open the selected file in a new split. |
+| `:SFind [dir]`  | Same as `:Find`, but open the selected file in a new split. |
 
 `[dir]` is the directory to search in. If omitted, the search is performed in
 the current working directory.
 
-\*`:SFind` accept a **command modifier**. For example, to open the selected file
-in a new vertical split, run `:vertical SFind [dir]`. `:tab SFind [dir]` will
-open the selected file in a new tab. For a full list of supported command
-modifiers, see `:help fzy-:SFind`.
+`:SFind` accept a **command modifier**. For example, to open the selected file
+in a new vertical split, run `:vertical SFind`. `:tab SFind` will open the
+selected file in a new tab. For a full list of supported command modifiers, see
+`:help fzy-:SFind`.
 
 ### Configuration
 
@@ -121,5 +121,5 @@ Distributed under the same terms as Vim itself. See `:help license`.
 [fzy]: https://github.com/jhawthorn/fzy
 [find]: https://pubs.opengroup.org/onlinepubs/9699919799/utilities/find.html
 [vim-fzy]: https://github.com/bfrg/vim-fzy
-[vim-fzy-common]: https://github.com/bfrg/vim-fzy-common
+[fzy-common]: https://github.com/bfrg/vim-fzy-common
 [plug]: https://github.com/junegunn/vim-plug
