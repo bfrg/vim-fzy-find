@@ -43,7 +43,7 @@ function! fzy#find#run(dir, vimcmd, ...) abort
     let findcmd = printf('cd %s; %s', shellescape(expand(path)), s:get('findcmd'))
     let editcmd = a:0 ? empty(a:1) ? a:vimcmd : (a:1 . ' ' . a:vimcmd) : a:vimcmd
 
-    return fzy#start(findcmd, function('s:find_cb', [path, editcmd]), {
+    return fzy#start(findcmd, funcref('s:find_cb', [path, editcmd]), {
             \ 'prompt': s:get('prompt'),
             \ 'height': s:get('height'),
             \ 'statusline': printf(':%s [directory: %s]', editcmd, path)
