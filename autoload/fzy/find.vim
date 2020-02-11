@@ -3,23 +3,29 @@
 " File:         autoload/fzy/find.vim
 " Author:       bfrg <https://github.com/bfrg>
 " Website:      https://github.com/bfrg/vim-fzy-find
-" Last Change:  Oct 14, 2019
+" Last Change:  Feb 11, 2020
 " License:      Same as Vim itself (see :h license)
 " ==============================================================================
 
 let s:save_cpo = &cpoptions
 set cpoptions&vim
 
+let s:defaults = {
+        \ 'prompt': '▶ ',
+        \ 'height': 11,
+        \ 'findcmd': 'find '
+        \   .. '-name ".*"'
+        \   .. ' \! -name . \! -name .gitignore \! -name .vim'
+        \   .. ' -prune -o \( -type f -o -type l \)'
+        \   .. ' -printf "%P\n" 2>/dev/null'
+        \ }
+
+let s:get = {k -> has_key(get(g:, 'fzy', {}), k) ? get(g:fzy, k) : get(s:defaults, k)}
+
 function! s:error(msg) abort
     echohl ErrorMsg | echomsg a:msg | echohl None
     return 0
 endfunction
-
-let s:findcmd = 'find '
-        \ .. '-name ".*"'
-        \ .. ' \! -name . \! -name .gitignore \! -name .vim'
-        \ .. ' -prune -o \( -type f -o -type l \)'
-        \ .. ' -printf "%P\n" 2>/dev/null'
 
 function! s:find_cb(dir, vimcmd, choice) abort
     let fpath = fnamemodify(a:dir, ':p:s?/$??') .. '/' .. a:choice
@@ -32,16 +38,14 @@ function! fzy#find#run(dir, vimcmd, ...) abort
     if !isdirectory(expand(a:dir))
         return s:error(printf('vim-fzy-find: Directory "%s" does not exist', expand(a:dir)))
     endif
+
     let path = simplify(fnamemodify(expand(a:dir), ':~'))
-
-    if !exists('g:fzy') || !has_key(g:fzy, 'findcmd')
-        let findcmd = printf('cd %s; %s', shellescape(expand(path)), s:findcmd)
-    else
-        let findcmd = printf('cd %s; %s', shellescape(expand(path)), get(g:fzy, 'findcmd'))
-    endif
-
+    let findcmd = printf('cd %s; %s', shellescape(expand(path)), s:get('findcmd'))
     let editcmd = a:0 ? empty(a:1) ? a:vimcmd : (a:1 . ' ' . a:vimcmd) : a:vimcmd
+
     return fzy#start(findcmd, function('s:find_cb', [path, editcmd]), {
+            \ 'prompt': s:get('prompt'),
+            \ 'height': s:get('height'),
             \ 'statusline': printf(':%s [directory: %s]', editcmd, path)
             \ })
 endfunction
