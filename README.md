@@ -30,22 +30,18 @@ in a new vertical split, run `:vertical SFind`. `:tab SFind` will open the
 selected file in a new tab. For a full list of supported command modifiers, see
 `:help fzy-:SFind`.
 
-### Configuration
 
-The height of the terminal window and the fzy input prompt can be changed
-through the dictionary variable `g:fzy`. Example:
-```vim
-let g:fzy = {'height': 15, 'prompt': '▶ '}
-```
+## Configuration
 
-**Note:** This variable is also used by [vim-fzy-common][fzy-common] in order to
-provide a uniform terminal-window height and fzy prompt.
+Options can be passed to `fzy` through the variable `g:fzy`. Currently, the
+following entries are supported:
 
-The file-search command is specified through the `findcmd` entry in the same
-dictionary `g:fzy`. Example:
-```vim
-let g:fzy = {'findcmd': 'fd --type f --type l'}
-```
+| Entry             | Description                                                                       | Default   |
+| ----------------- | --------------------------------------------------------------------------------- | --------- |
+| `g:fzy.lines`     | Specify how many lines of results to show. Equivalent to fzy's `--lines` option.  | `10`      |
+| `g:fzy.prompt`    | Fzy input prompt. Equivalent to fzy's `--prompt` option.                          | `▶ `      |
+| `g:fzy.showinfo`  | Show selection info line. Equivalent to fzy's `--show-info` option.               | `0`       |
+| `g:fzy.findcmd`   | File-search command.                                                              | see below |
 
 If no `findcmd` entry is specified, the following is used:
 ```bash
@@ -62,6 +58,21 @@ Broken down the expression means:
 
 The file-search command is always run in the specified search directory to avoid
 listing long file paths.
+
+**Note:** The entries `lines`, `prompt` and `showinfo` are shared with the
+plugin [vim-fzy-builtins][fzy-builtins] in order to provide a uniform fzy
+interface.
+
+Example:
+```vim
+let g:fzy = {
+        \ 'lines': 15,
+        \ 'prompt': '>>> ',
+        \ 'showinfo': 1,
+        \ 'findcmd': 'fd --type f --type l'
+        \ }
+```
+
 
 ## Tips and Tricks
 
@@ -129,5 +140,5 @@ Distributed under the same terms as Vim itself. See `:help license`.
 [fzy]: https://github.com/jhawthorn/fzy
 [find]: https://pubs.opengroup.org/onlinepubs/9699919799/utilities/find.html
 [vim-fzy]: https://github.com/bfrg/vim-fzy
-[fzy-common]: https://github.com/bfrg/vim-fzy-common
+[fzy-builtins]: https://github.com/bfrg/vim-fzy-builtins
 [plug]: https://github.com/junegunn/vim-plug

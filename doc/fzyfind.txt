@@ -47,14 +47,25 @@ COMMANDS                                                   *fzy-find-commands*
 CONFIGURATION                                                *fzy-find-config*
 
                                                               *fzy-find-g:fzy*
-The height of the terminal window and the fzy input prompt can be changed
-through the dictionary variable |g:fzy|. Example:
->
-    let g:fzy = {'height': 15, 'prompt': '▶ '}
-<
-Note: This variable is also used by https://github.com/bfrg/vim-fzy-common in
-order to provide a uniform terminal-window height and fzy prompt.
+The find command and the fzy options can be changed through the |Dictionary|
+variable g:fzy.
 
+Note: This variable is also used by https://github.com/bfrg/vim-fzy-builtins.
+Both plugins share the keys "lines", "prompt" and "showninfo".
+
+g:fzy.lines
+            Specify how many lines of results to show. This is equivalent to
+            fzy's "--lines" option.
+            Default: 10
+
+g:fzy.prompt
+            Fzy input prompt. Equivalent to fzy's "--prompt" option.
+            Default: "▶ "
+
+g:fzy.showinfo
+            Show selection info line. Equivalent to fzy's "--show-info"
+            option.
+            Default: 0
 
 g:fzy.findcmd                                                  *g:fzy.findcmd*
             Set the find executable for the |fzy:-Find| and |fzy-:SFind|
@@ -104,6 +115,11 @@ Examples ~
    https://github.com/ggreer/the_silver_searcher
 >
     let g:fzy = {'findcmd': 'ag --silent --ignore __pycache__ -g ""'}
+<
+
+4. Show 15 selection lines, a custom prompt, and the selection info line:
+>
+    let g:fzy = {'lines': 15, 'prompt': '>>> ', 'showinfo': 1}
 <
 
 Custom commands ~

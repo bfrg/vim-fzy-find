@@ -3,7 +3,7 @@
 " File:         autoload/fzy/find.vim
 " Author:       bfrg <https://github.com/bfrg>
 " Website:      https://github.com/bfrg/vim-fzy-find
-" Last Change:  Feb 11, 2020
+" Last Change:  Feb 27, 2020
 " License:      Same as Vim itself (see :h license)
 " ==============================================================================
 
@@ -12,7 +12,7 @@ set cpoptions&vim
 
 let s:defaults = {
         \ 'prompt': '▶ ',
-        \ 'height': 11,
+        \ 'lines': 10,
         \ 'findcmd': 'find '
         \   .. '-name ".*"'
         \   .. ' \! -name . \! -name .gitignore \! -name .vim'
@@ -24,7 +24,6 @@ let s:get = {k -> has_key(get(g:, 'fzy', {}), k) ? get(g:fzy, k) : get(s:default
 
 function! s:error(msg) abort
     echohl ErrorMsg | echomsg a:msg | echohl None
-    return 0
 endfunction
 
 function! s:find_cb(dir, vimcmd, choice) abort
@@ -45,7 +44,8 @@ function! fzy#find#run(dir, vimcmd, ...) abort
 
     return fzy#start(findcmd, funcref('s:find_cb', [path, editcmd]), {
             \ 'prompt': s:get('prompt'),
-            \ 'height': s:get('height'),
+            \ 'lines': s:get('lines'),
+            \ 'showinfo': s:get('showinfo'),
             \ 'statusline': printf(':%s [directory: %s]', editcmd, path)
             \ })
 endfunction
