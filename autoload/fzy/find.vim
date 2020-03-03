@@ -3,7 +3,7 @@
 " File:         autoload/fzy/find.vim
 " Author:       bfrg <https://github.com/bfrg>
 " Website:      https://github.com/bfrg/vim-fzy-find
-" Last Change:  Feb 27, 2020
+" Last Change:  Mar 3, 2020
 " License:      Same as Vim itself (see :h license)
 " ==============================================================================
 
@@ -33,14 +33,14 @@ function! s:find_cb(dir, vimcmd, choice) abort
     execute a:vimcmd fpath
 endfunction
 
-function! fzy#find#run(dir, vimcmd, ...) abort
+function! fzy#find#run(dir, vimcmd, mods) abort
     if !isdirectory(expand(a:dir))
         return s:error(printf('vim-fzy-find: Directory "%s" does not exist', expand(a:dir)))
     endif
 
     let path = simplify(fnamemodify(expand(a:dir), ':~'))
     let findcmd = printf('cd %s; %s', shellescape(expand(path)), s:get('findcmd'))
-    let editcmd = a:0 ? empty(a:1) ? a:vimcmd : (a:1 . ' ' . a:vimcmd) : a:vimcmd
+    let editcmd = empty(a:mods) ? a:vimcmd : (a:mods .. ' ' .. a:vimcmd)
 
     return fzy#start(findcmd, funcref('s:find_cb', [path, editcmd]), {
             \ 'prompt': s:get('prompt'),
