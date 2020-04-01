@@ -3,9 +3,6 @@
 Fuzzy-select files under a directory using the fuzzy-searcher [fzy][fzy] and
 your favorite [find][find] command.
 
-**Note:** This plugin requires [vim-fzy][vim-fzy]. See
-[installation](#installation) instructions below.
-
 <dl>
   <p align="center">
   <a href="https://asciinema.org/a/274244">
@@ -13,6 +10,10 @@ your favorite [find][find] command.
   </a>
   </p>
 </dl>
+
+## Requirements
+
+Vim, [vim-fzy][vim-fzy] (see [installation](#installation) instructions below).
 
 
 ## Usage
@@ -33,15 +34,15 @@ supported command modifiers, see <kbd>:help fzy-:SFind</kbd>.
 
 ## Configuration
 
-Options can be passed to fzy through the dictionary variable `g:fzy`. Currently,
-the following entries are supported:
+Options can be passed to fzy through the dictionary `g:fzy`. Currently, the
+following entries are supported:
 
-| Entry             | Description                                                               | Default   |
-| ----------------- | ------------------------------------------------------------------------- | --------- |
-| `g:fzy.lines`     | Specify how many lines of results to show. Sets the fzy `--lines` option. | `10`      |
-| `g:fzy.prompt`    | Set the fzy input prompt.                                                 | `▶ `      |
-| `g:fzy.showinfo`  | If true, fzy is invoked with the `--show-info` option.                    | `0`       |
-| `g:fzy.findcmd`   | File-search command.                                                      | see below |
+| Entry       | Description                                                               | Default   |
+| ----------- | ------------------------------------------------------------------------- | --------- |
+| `lines`     | Specify how many lines of results to show. Sets the fzy `--lines` option. | `10`      |
+| `prompt`    | Set the fzy input prompt.                                                 | `▶ `      |
+| `showinfo`  | If true, fzy is invoked with the `--show-info` option.                    | `0`       |
+| `findcmd`   | File-search command.                                                      | see below |
 
 **Note:** The entries `lines`, `prompt` and `showinfo` are also used by the
 plugin [vim-fzy-builtins][fzy-builtins] in order to provide a uniform fzy
