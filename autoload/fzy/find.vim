@@ -10,9 +10,10 @@
 let s:save_cpo = &cpoptions
 set cpoptions&vim
 
-let s:defaults = {
+const s:defaults = {
         \ 'prompt': '▶ ',
         \ 'lines': 10,
+        \ 'showinfo': 0,
         \ 'findcmd': 'find '
         \   .. '-name ".*"'
         \   .. ' \! -name . \! -name .gitignore \! -name .vim'
@@ -20,10 +21,10 @@ let s:defaults = {
         \   .. ' -printf "%P\n" 2>/dev/null'
         \ }
 
-let s:get = {k -> has_key(get(g:, 'fzy', {}), k) ? get(g:fzy, k) : get(s:defaults, k)}
+const s:get = {k -> get(g:, 'fzy', {})->get(k, s:defaults[k])}
 
-function s:error(msg) abort
-    echohl ErrorMsg | echomsg a:msg | echohl None
+function s:error(...)
+    echohl ErrorMsg | echomsg call('printf', a:000) | echohl None
 endfunction
 
 function s:find_cb(dir, vimcmd, choice) abort
@@ -35,12 +36,12 @@ endfunction
 
 function fzy#find#run(dir, vimcmd, mods) abort
     if !isdirectory(expand(a:dir))
-        return s:error(printf('vim-fzy-find: Directory "%s" does not exist', expand(a:dir)))
+        return s:error('fzy-find: Directory "%s" does not exist', expand(a:dir))
     endif
 
-    let path = simplify(fnamemodify(expand(a:dir), ':~'))
-    let findcmd = printf('cd %s; %s', shellescape(expand(path)), s:get('findcmd'))
-    let editcmd = empty(a:mods) ? a:vimcmd : (a:mods .. ' ' .. a:vimcmd)
+    const path = expand(a:dir)->fnamemodify(':~')->simplify()
+    const findcmd = printf('cd %s; %s', expand(path)->shellescape(), s:get('findcmd'))
+    const editcmd = empty(a:mods) ? a:vimcmd : (a:mods .. ' ' .. a:vimcmd)
 
     return fzy#start(findcmd, funcref('s:find_cb', [path, editcmd]), {
             \ 'prompt': s:get('prompt'),
