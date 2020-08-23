@@ -167,10 +167,10 @@ endif
 If you prefer shorter Ex commands, add the following to your `vimrc`:
 ```vim
 " Fuzzy search and edit files recursively under a specified directory
-command! -nargs=* -bar -complete=dir FE Find <args>
-command! -nargs=* -bar -complete=dir FS <mods> SFind <args>
-command! -nargs=* -bar -complete=dir FV vertical SFind <args>
-command! -nargs=* -bar -complete=dir FT tab SFind <args>
+command -nargs=* -bar -complete=dir FE Find <args>
+command -nargs=* -bar -complete=dir FS <mods> SFind <args>
+command -nargs=* -bar -complete=dir FV vertical SFind <args>
+command -nargs=* -bar -complete=dir FT tab SFind <args>
 ```
 
 If you prefer mappings over Ex commands, you might find the following useful:

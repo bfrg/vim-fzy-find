@@ -194,23 +194,16 @@ Examples ~
 >
     let g:fzy = {'findcmd': 'ag --silent --ignore __pycache__ -g ""'}
 <
-
-4. Show 15 selection lines, a custom prompt, and the selection info line:
->
-    let g:fzy = {'lines': 15, 'prompt': '>>> ', 'showinfo': 1}
-<
-
 Custom commands ~
 
 If you prefer shorter Ex commands, add the following to your |vimrc|:
 >
     " Fuzzy search and edit files recursively under a specified directory
-    command! -nargs=* -bar -complete=dir FE Find <args>
-    command! -nargs=* -bar -complete=dir FS <mods> SFind <args>
-    command! -nargs=* -bar -complete=dir FV vertical SFind <args>
-    command! -nargs=* -bar -complete=dir FT tab SFind <args>
+    command -nargs=* -bar -complete=dir FE Find <args>
+    command -nargs=* -bar -complete=dir FS <mods> SFind <args>
+    command -nargs=* -bar -complete=dir FV vertical SFind <args>
+    command -nargs=* -bar -complete=dir FT tab SFind <args>
 <
-
 Mappings ~
 
 If you prefer mappings over Ex commands, you might find the following useful:
