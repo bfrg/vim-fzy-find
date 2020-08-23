@@ -13,7 +13,8 @@ your favorite [find][find] command.
 
 ## Requirements
 
-Vim, [vim-fzy][vim-fzy] (see [installation](#installation) instructions below).
+[fzy][fzy], [vim-fzy][vim-fzy] (see [installation](#installation) instructions
+below).
 
 
 ## Usage
@@ -37,47 +38,120 @@ supported command modifiers, see <kbd>:help fzy-:SFind</kbd>.
 Options can be passed to fzy through the dictionary `g:fzy`. Currently, the
 following entries are supported:
 
-| Entry       | Description                                                               | Default   |
-| ----------- | ------------------------------------------------------------------------- | --------- |
-| `lines`     | Specify how many lines of results to show. Sets the fzy `--lines` option. | `10`      |
-| `prompt`    | Set the fzy input prompt.                                                 | `▶ `      |
-| `showinfo`  | If true, fzy is invoked with the `--show-info` option.                    | `0`       |
-| `findcmd`   | File-search command.                                                      | see below |
+| Entry            | Description                                                               | Default      |
+| ---------------- | ------------------------------------------------------------------------- | ------------ |
+| `lines`          | Specify how many lines of results to show. Sets the fzy `--lines` option. | `10`         |
+| `prompt`         | Set the fzy input prompt.                                                 | `▶ `         |
+| `showinfo`       | If true, fzy is invoked with the `--show-info` option.                    | `0`          |
+| `term_highlight` | Highlight group for the terminal window.                                  | `'Terminal'` |
+| `popup`          | Display fzy in a popup window. Entry must be a dictionary.                | see below    |
+| `findcmd`        | File-search command.                                                      | see below    |
 
-**Note:** The entries `lines`, `prompt` and `showinfo` are also used by the
-plugin [vim-fzy-builtins][fzy-builtins] in order to provide a uniform fzy
-interface.
+**Note:** All entries except for `findcmd` are also used by the plugin
+[vim-fzy-builtins][fzy-builtins] in order to provide a uniform fzy interface.
 
-Example:
-```vim
-let g:fzy = {
-        \ 'lines': 15,
-        \ 'prompt': '>>> ',
-        \ 'showinfo': 1,
-        \ 'findcmd': 'fd --type f --type l'
-        \ }
-```
-
-If no `findcmd` entry is specified, the following is used:
+If `findcmd` is not specified, the following command is used:
 ```bash
-find -name ".*" \! -name . \! -name .gitignore \! -name .vim \
-  -prune -o \( -type f -o -type l \) \
-  -printf "%P\n" 2>/dev/null
+find
+  -name '.*'
+  -a '!' -name .
+  -a '!' -name .gitignore
+  -a '!' -name .vim
+  -a -prune
+  -o '(' -type f -o -type l ')'
+  -a -print 2> /dev/null
+| sed 's/^\.\///'
 ```
 
 Broken down the expression means:
 - Ignore all hidden files and directories, except for `.gitignore`, and `.vim`,
 - print only files and symlinks.
-- The `-printf` option is a GNU/find extension that will remove the `./` prefix
-  from all file paths
+- The sed(1) command will remove the `./` prefix from all file paths.
 
 The file-search command is always run in the specified search directory to avoid
 listing long file paths.
 
+When the `popup` entry is specified, fzy is displayed in a popup window. When
+set to an empty dictionary, the following values are used:
+```vim
+{
+    'padding': [0, 1, 0, 1],
+    'border': [],
+    'minwidth': 80
+}
+```
+
+The following `popup` entries can be set: `line`, `col`, `pos`, `minwidth`,
+`drag`, `resize`, `close`, `padding`, `border`, `borderhighlight`,
+`borderchars`, `highlight`, and `zindex`. For more details on each entry see
+<kbd>:help popup-usage</kbd> as well as the examples below.
+
+
+## Examples
+
+1. Display 15 items, use a custom prompt, and show the selection info line:
+   ```vim
+   let g:fzy = {
+           \ 'lines': 15,
+           \ 'prompt': '>>> ',
+           \ 'showinfo': 1
+           \ }
+   ```
+2. Same as 1. but display fzy in a popup window, use the default popup options:
+   ```vim
+   let g:fzy = {
+           \ 'lines': 15,
+           \ 'prompt': '>>> ',
+           \ 'showinfo': 1,
+           \ 'popup': {}
+           \ }
+   ```
+3. Use a custom popup border and custom highlighting:
+   ```vim
+   let g:fzy = {
+           \   'lines': 15,
+           \   'showinfo': 1,
+           \   'term_highlight': 'NormalDark',
+           \   'popup': {
+           \     'minwidth': 90,
+           \     'highlight': 'NormalDark',
+           \     'borderchars': ['─', '│', '─', '│', '┌', '┐', '┘', '└'],
+           \     'padding': [0, 1, 0, 1],
+           \     'borderhighlight': ['GreyDark']
+           \   }
+           \ }
+   ```
+4. Same as 3. but don't draw a popup border:
+   ```vim
+   let g:fzy = {
+           \   'lines': 15,
+           \   'showinfo': 1,
+           \   'term_highlight': 'NormalDark',
+           \   'popup': {
+           \     'minwidth': 90,
+           \     'highlight': 'NormalDark',
+           \     'borderchars': [' '],
+           \     'padding': [0, 1, 0, 1],
+           \     'borderhighlight': ['GreyDark']
+           \   }
+           \ }
+   ```
+5. Open the popup window at the 5th screen line from the top of the screen:
+   ```vim
+   let g:fzy = {
+           \   'lines': 15,
+           \   'showinfo': 1,
+           \   'popup': {
+           \     'padding': [0, 1, 0, 1],
+           \     'pos': 'topleft',
+           \     'line': 5,
+           \   }
+           \ }
+   ```
 
 ## Tips and Tricks
 
-Set your preferred file-search command only when it's available:
+Set your preferred file-search command only if it's available:
 ```vim
 let g:fzy = {'lines': 15, 'prompt': '>> '}
 

@@ -6,7 +6,7 @@ License:    Same terms as Vim itself (see |license|)
 
 
 ==============================================================================
-INTRODUCTION                                         *vim-fzy-find* *fzy-find*
+INTRODUCTION                                                        *fzy-find*
 
 Find files under a directory using your favorite find command (fd, find(1),
 the_silver_searcher, ripgrep, etc.) and select the file using the
@@ -17,7 +17,6 @@ instructions can be found on the plugin's website.
 
 ==============================================================================
 COMMANDS                                                   *fzy-find-commands*
-                                                              *fzy-find-usage*
 
 :Find [dir]                                                        *fzy-:Find*
             Find files recursively under the directory [dir], open the
@@ -48,10 +47,7 @@ CONFIGURATION                                                *fzy-find-config*
 
                                                               *fzy-find-g:fzy*
 The find command and the fzy options can be changed through the |Dictionary|
-variable g:fzy.
-
-Note: This variable is also used by https://github.com/bfrg/vim-fzy-builtins.
-Both plugins share the keys "lines", "prompt" and "showninfo".
+variable g:fzy. The following entries can be set:
 
 g:fzy.lines
             Specify how many lines of results to show. This is equivalent to
@@ -66,6 +62,21 @@ g:fzy.showinfo
             Show selection info line. Equivalent to fzy's "--show-info"
             option.
             Default: 0
+
+g:fzy.term_highlight
+            Highlighting for the terminal window.
+            Default: |hl-Terminal|
+
+g:fzy.popup
+            When this entry is present fzy is displayed in a |popup-window|.
+            Set it to {} for default popup options.
+            Default: `{'padding': [0,1,0,1], 'border': [], 'minwidth': 80}`
+
+            The following popup options are supported:
+            "line", "col", "pos", "minwidth", "drag", "resize", "close",
+            "padding", "border", "borderhighlight", "borderchars",
+            "highlight", and "zindex". For more details on each entry see
+            |popup-usage| as well as the examples below.
 
 g:fzy.findcmd                                                  *g:fzy.findcmd*
             Set the find executable for the |fzy:-Find| and |fzy-:SFind|
@@ -82,19 +93,86 @@ g:fzy.findcmd                                                  *g:fzy.findcmd*
             The file-search command is always run in the specified search
             directory to avoid long file paths.
 
-                                                            *fzy-find-default*
             If no |g:fzy.findcmd| is specified, the default find(1) executable
             is used: >
-                find -name ".*" \! -name . \! -name .gitignore \! -name .vim
-                    -prune -o \( -type f -o -type l \)
-                    -printf "%P\n" 2>/dev/null
+                find
+                  -name '.*'
+                  -a '!' -name .
+                  -a '!' -name .gitignore
+                  -a '!' -name .vim
+                  -a -prune
+                  -o '(' -type f -o -type l ')'
+                  -a -print 2> /dev/null
+                | sed 's/^\.\///'
 <
-            Broken down, the expression means:
+            Broken down the expression means:
                 - ignore all files and directories starting with a dot,
                 - except for the current directory, .gitignore and .vim
                 - list only files and symlinks
-                - the -printf option is a GNU/find extension that will remove
-                  the "./" prefix from all file paths
+                - the sed(1) command will remove the "./" prefix from all file
+                  paths
+
+Note: All entries except for "findcmd" are also used by
+https://github.com/bfrg/vim-fzy-builtins to provide a uniform fzy interface.
+
+==============================================================================
+EXAMPLES                                                   *fzy-find-examples*
+
+1. Display 15 items, use a custom prompt, and show the selection info line: >
+    let g:fzy = {
+            \ 'lines': 15,
+            \ 'prompt': '>>> ',
+            \ 'showinfo': 1
+            \ }
+
+2. Same as 1. but display fzy in a popup window, use the default popup
+   options: >
+    let g:fzy = {
+            \ 'lines': 15,
+            \ 'prompt': '>>> ',
+            \ 'showinfo': 1,
+            \ 'popup': {}
+            \ }
+
+3. Use a custom popup border and custom highlighting: >
+    let g:fzy = {
+            \   'lines': 15,
+            \   'showinfo': 1,
+            \   'term_highlight': 'NormalDark',
+            \   'popup': {
+            \     'minwidth': 90,
+            \     'highlight': 'NormalDark',
+            \     'borderchars': ['─', '│', '─', '│', '┌', '┐', '┘', '└'],
+            \     'padding': [0, 1, 0, 1],
+            \     'borderhighlight': ['GreyDark']
+            \   }
+            \ }
+
+4. Same as 3. but don't draw a popup border: >
+    let g:fzy = {
+            \   'lines': 15,
+            \   'showinfo': 1,
+            \   'term_highlight': 'NormalDark',
+            \   'popup': {
+            \     'minwidth': 90,
+            \     'highlight': 'NormalDark',
+            \     'borderchars': [' '],
+            \     'padding': [0, 1, 0, 1],
+            \     'borderhighlight': ['GreyDark']
+            \   }
+            \ }
+
+5. Display the popup window at the 5th screen line from the top of the
+   screen: >
+    let g:fzy = {
+            \   'lines': 15,
+            \   'showinfo': 1,
+            \   'popup': {
+            \     'padding': [0, 1, 0, 1],
+            \     'pos': 'topleft',
+            \     'line': 5,
+            \   }
+            \ }
 
 ==============================================================================
 TIPS AND TRICKS                                              *fzy-find-tricks*
