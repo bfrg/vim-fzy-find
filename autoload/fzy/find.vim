@@ -3,7 +3,7 @@
 " File:         autoload/fzy/find.vim
 " Author:       bfrg <https://github.com/bfrg>
 " Website:      https://github.com/bfrg/vim-fzy-find
-" Last Change:  Aug 23, 2020
+" Last Change:  Oct 12, 2020
 " License:      Same as Vim itself (see :h license)
 " ==============================================================================
 
@@ -22,23 +22,13 @@ const s:findcmd =<< trim END
     | sed 's/^\.\///'
 END
 
-const s:defaults = {
-        \ 'prompt': '▶ ',
-        \ 'lines': 10,
-        \ 'showinfo': 0,
-        \ 'term_highlight': 'Terminal',
-        \ 'findcmd': join(s:findcmd)
-        \ }
-
-const s:get = {k -> get(g:, 'fzy', {})->get(k, get(s:defaults, k))}
-
 function s:error(...)
     echohl ErrorMsg | echomsg call('printf', a:000) | echohl None
 endfunction
 
 function s:find_cb(dir, vimcmd, choice) abort
     let fpath = fnamemodify(a:dir, ':p:s?/$??') .. '/' .. a:choice
-    let fpath = fnameescape(fnamemodify(fpath, ':.'))
+    let fpath = fnamemodify(fpath, ':.')->fnameescape()
     call histadd('cmd', a:vimcmd .. ' ' .. fpath)
     execute a:vimcmd fpath
 endfunction
@@ -49,22 +39,14 @@ function fzy#find#run(dir, vimcmd, mods) abort
     endif
 
     const path = expand(a:dir)->fnamemodify(':~')->simplify()
-    const findcmd = printf('cd %s; %s', expand(path)->shellescape(), s:get('findcmd'))
+    const findcmd = printf('cd %s; %s',
+            \ expand(path)->shellescape(),
+            \ get(g:, 'fzy', {})->get('findcmd', join(s:findcmd))
+            \ )
     const editcmd = empty(a:mods) ? a:vimcmd : (a:mods .. ' ' .. a:vimcmd)
     const stl = printf(':%s [directory: %s]', editcmd, path)
-    let opts = {
-            \ 'prompt': s:get('prompt'),
-            \ 'lines': s:get('lines'),
-            \ 'term_highlight': s:get('term_highlight'),
-            \ 'showinfo': s:get('showinfo'),
-            \ 'statusline': stl
-            \ }
-
-    if get(g:, 'fzy', {})->has_key('popup')
-        let popopts = {'popup': {'title': stl}}
-        call extend(popopts.popup, s:get('popup'), 'keep')
-        call extend(opts, popopts)
-    endif
+    let opts = get(g:, 'fzy', {})->copy()->extend({'statusline': stl, 'prompt': '▶ '})
+    call get(opts, 'popup', {})->extend({'title': stl})
 
     return fzy#start(findcmd, funcref('s:find_cb', [path, editcmd]), opts)
 endfunction
