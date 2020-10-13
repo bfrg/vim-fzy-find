@@ -1,3 +1,9 @@
+# IMPORTANT
+
+This plugin is **DEPRECATED** since the commands are now provided by default by
+[vim-fzy][vim-fzy].
+
+
 # vim-fzy-find
 
 Fuzzy-select files under a directory using the fuzzy-searcher [fzy][fzy] and
